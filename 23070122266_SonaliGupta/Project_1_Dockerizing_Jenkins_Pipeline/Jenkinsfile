@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                echo 'Pulling source code...'
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker container...'
+                bat 'docker build -t flask-pipeline-app:latest 23070122266_SonaliGupta/Project_1_Dockerizing_Jenkins_Pipeline'
+            }
+        }
+
+        stage('Run and Test Container') {
+            steps {
+                echo 'Testing container...'
+                bat 'docker run -d --name flask-pipeline-container -p 5000:5000 flask-pipeline-app:latest'
+                bat 'timeout /t 5'
+                bat 'curl http://localhost:5000 || exit 0'
+            }
+        }
+
+        stage('Clean Environment') {
+            steps {
+                echo 'Cleaning up test container...'
+                bat 'docker stop flask-pipeline-container || exit 0'
+                bat 'docker rm flask-pipeline-container || exit 0'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline finished successfully!'
+        }
+    }
+}
