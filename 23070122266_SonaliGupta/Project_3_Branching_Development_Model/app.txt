@@ -1,2 +1,2 @@
-﻿# Core Application - v1.0.0
-Production stable release.
+﻿# Core Application - v1.1.0-dev
+Integration branch for active development.
